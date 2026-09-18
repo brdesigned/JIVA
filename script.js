@@ -99,62 +99,45 @@ document.addEventListener(
 );
 
 
-// ==========================================
+// ==================================================
 // WAITLIST FORM
-// ==========================================
+// ==================================================
 
-const waitlistForm =
-  document.querySelector("#waitlist-form");
+const waitlistForm = document.querySelector("#waitlist-form");
+const formMessage = document.querySelector("#form-message");
 
-const formMessage =
-  document.querySelector("#form-message");
+waitlistForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
 
+  const name = document.querySelector("#name").value.trim();
 
-waitlistForm.addEventListener(
-  "submit",
-  event => {
+  const formData = new FormData(waitlistForm);
 
-    event.preventDefault();
+  try {
+    const response = await fetch(waitlistForm.action, {
+      method: "POST",
+      body: formData,
+      headers: {
+        Accept: "application/json"
+      }
+    });
 
-    const name =
-      document.querySelector("#name")
-      .value
-      .trim();
-
-    const email =
-      document.querySelector("#email")
-      .value
-      .trim();
-
-
-    if (!name || !email) {
-
+    if (response.ok) {
       formMessage.textContent =
-        "Please enter your name and email.";
+        `You're in, ${name}. Welcome to JIVA.`;
 
-      return;
+      waitlistForm.reset();
+    } else {
+      formMessage.textContent =
+        "Something went wrong. Please try again.";
     }
-
-
-    /*
-      This is currently FRONT-END ONLY.
-
-      Later you can connect this form to:
-      - Supabase
-      - Mailchimp
-      - Klaviyo
-      - ConvertKit
-      - your own API
-    */
-
-
+  } catch (error) {
     formMessage.textContent =
-      `You're in, ${name}. Welcome to JIVA.`;
-
-    waitlistForm.reset();
-
+      "Something went wrong. Please try again.";
   }
-);
+});
+
+
 
 
 // ==========================================
